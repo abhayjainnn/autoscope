@@ -13,8 +13,8 @@ export default function IntroSplash({ targetRef, onDone }: { targetRef: RefObjec
   const reduced = typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
   const [phase, setPhase] = useState<'hidden' | 'show' | 'fly' | 'done'>(played || reduced ? 'done' : 'show');
   const logoRef = useRef<HTMLDivElement>(null);
-  // Fit the wordmark on narrow phones (logo + text is about 3.6x the mark size wide).
-  const splashSize = typeof window !== 'undefined' ? Math.max(48, Math.min(120, Math.floor((window.innerWidth - 48) / 3.6))) : 120;
+  // Fit the wordmark on narrow phones (logo + text is about 4x the mark size wide).
+  const splashSize = typeof window !== 'undefined' ? Math.max(48, Math.min(120, Math.floor((window.innerWidth - 60) / 4.2))) : 120;
   const doneRef = useRef(onDone);
   doneRef.current = onDone;
   const [flyStyle, setFlyStyle] = useState<React.CSSProperties>({});
