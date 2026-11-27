@@ -14,11 +14,13 @@ import { STATION_TYPES, newStation } from '../components/line/stationDefaults';
 
 const nodeTypes = { station: StationNode };
 const X_GAP = 240;
+const TOUCH = typeof window !== 'undefined' && !!window.matchMedia?.('(pointer: coarse)').matches;
+const FIT = { padding: 0.1, maxZoom: 1.1, minZoom: TOUCH ? 0.25 : 0.6 };
 
 function FitOnChange({ count }: { count: number }) {
   const { fitView } = useReactFlow();
   useEffect(() => {
-    const t = setTimeout(() => fitView({ padding: 0.1, duration: 300, maxZoom: 1.1, minZoom: 0.6 }), 30);
+    const t = setTimeout(() => fitView({ ...FIT, duration: 300 }), 30);
     return () => clearTimeout(t);
   }, [count, fitView]);
   return null;
@@ -170,7 +172,7 @@ function LineBuilderInner() {
         </Empty>
       ) : (
         <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_340px]">
-          <div className="relative h-[420px] overflow-hidden rounded-2xl border border-ink-100 bg-white shadow-sm">
+          <div className="relative h-[320px] overflow-hidden rounded-2xl sm:h-[420px] border border-ink-100 bg-white shadow-sm">
             <ReactFlow
               nodes={nodes}
               edges={edges}
@@ -180,9 +182,10 @@ function LineBuilderInner() {
               nodesDraggable={false}
               nodesConnectable={false}
               fitView
-              fitViewOptions={{ padding: 0.1, maxZoom: 1.1, minZoom: 0.6 }}
-              panOnScroll
-              minZoom={0.3}
+              fitViewOptions={FIT}
+              panOnScroll={!TOUCH}
+              preventScrolling={!TOUCH}
+              minZoom={0.2}
               maxZoom={1.6}
               proOptions={{ hideAttribution: true }}
             >

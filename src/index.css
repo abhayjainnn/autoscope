@@ -43,6 +43,14 @@
 
 html, body, #root { height: 100%; }
 html { scroll-behavior: smooth; }
+html, body { overflow-x: clip; max-width: 100%; }
+img, svg, canvas, video { max-width: 100%; }
+.recharts-wrapper, .recharts-surface { max-width: 100%; }
+/* Phones: 16px inputs stop iOS auto-zoom; tables scroll inside their card. */
+@media (max-width: 640px) {
+  input, select, textarea { font-size: 16px !important; }
+  table { font-size: 12px; }
+}
 body { background: var(--color-ink-50); color: var(--color-ink-900); font-family: var(--font-sans); -webkit-font-smoothing: antialiased; }
 h1, h2, .font-display { font-family: var(--font-display); letter-spacing: -0.01em; }
 ::selection { background: var(--color-brand-200); }

@@ -4,10 +4,10 @@ const cx = (...c: (string | false | null | undefined)[]) => c.filter(Boolean).jo
 
 export function PageHeader({ eyebrow, title, subtitle, actions }: { eyebrow?: string; title: string; subtitle?: ReactNode; actions?: ReactNode }) {
   return (
-    <div className="mb-8 flex flex-wrap items-end justify-between gap-4 border-b border-ink-200/60 pb-6">
-      <div>
+    <div className="mb-6 flex flex-wrap items-end justify-between gap-4 border-b border-ink-200/60 pb-5 md:mb-8 md:pb-6">
+      <div className="min-w-0">
         {eyebrow && <div className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.18em] text-brand-600"><span className="h-px w-6 bg-brand-400" />{eyebrow}</div>}
-        <h1 className="mt-2 font-display text-3xl font-semibold leading-tight tracking-tight text-ink-900 md:text-4xl">{title}</h1>
+        <h1 className="mt-2 break-words font-display text-2xl font-semibold sm:text-3xl leading-tight tracking-tight text-ink-900 md:text-4xl">{title}</h1>
         {subtitle && <p className="mt-2 max-w-3xl text-[15px] leading-relaxed text-ink-500">{subtitle}</p>}
       </div>
       {actions && <div className="flex flex-wrap gap-2">{actions}</div>}

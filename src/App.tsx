@@ -130,7 +130,7 @@ export default function App() {
       <Sidebar />
       <div className="min-w-0 flex-1">
         <MobileNav />
-        <main className="print-full mx-auto max-w-7xl px-4 py-6 md:px-8 md:py-8">
+        <main className="print-full mx-auto w-full min-w-0 max-w-7xl px-4 py-5 md:px-8 md:py-8">
           <Routes>
             <Route path="/app" element={<Overview />} />
             <Route path="/profile" element={<Profile />} />
