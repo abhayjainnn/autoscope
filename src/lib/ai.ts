@@ -1,5 +1,8 @@
 import type { AnalysisBundle, ChatMessage, CompanyProfile, ExtractionResult, Line, TechClass } from '../types';
 import { STATION_TYPE_LABEL } from './format';
+import { useApp } from '../store';
+import { evaluateOffice } from '../engine/office';
+import { OFFICE_TECH, DEFAULT_OFFICE_GLOBALS } from '../data/officeCatalog';
 
 export interface ExtractInput {
   text?: string;
@@ -168,6 +171,16 @@ export function buildAiContext(bundle: AnalysisBundle | null | undefined, profil
       probPaybackWithinHorizonPct: r0(mc.probPaybackWithinHorizon * 100),
     };
     ctx.sensitivity = bundle.sensitivity.slice(0, 6).map((s) => ({ input: s.label, npvLow: r0(s.npvLow), npvHigh: r0(s.npvHigh), base: r0(s.base) }));
+    ctx.stationVerdicts = (bundle.verdicts ?? []).map((v) => ({ station: stName(v.stationId), verdict: v.verdict, label: v.label, why: v.message }));
+    try {
+      const st = useApp.getState();
+      const off = evaluateOffice(st.office ?? [], { ...OFFICE_TECH, ...(st.officeTech ?? {}) }, { ...DEFAULT_OFFICE_GLOBALS, ...(st.officeGlobals ?? {}) }, profile.labourCostPerHour);
+      ctx.officeProcesses = {
+        note: 'Office/admin processes scored with suitability S (0-100) and impact I. Paybacks in MONTHS.',
+        rows: off.rows.slice(0, 10).map((r) => ({ name: r.p.name, S: r1(r.S), I: r0(r.I), verdict: r.verdict, wave: r.wave, tech: r.t?.name ?? null, investment: r.base ? r0(r.base.K) : null, netPerYear: r.base ? r0(r.base.N) : null, paybackMonths: r.base && Number.isFinite(r.base.pay) ? r1(r.base.pay) : null, hoursFreed: r.base ? r0(r.base.freed) : null })),
+        portfolioWaves12: { investment: r0(off.portfolio.K), netPerYear: r0(off.portfolio.N), paybackMonths: Number.isFinite(off.portfolio.pay) ? r1(off.portfolio.pay) : null, hoursFreed: r0(off.portfolio.freed) },
+      };
+    } catch { /* office context is optional */ }
   } catch {
     /* partial context is fine */
   }

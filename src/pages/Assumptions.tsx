@@ -4,6 +4,26 @@ import { PageHeader, Card, Field, NumberInput, Slider, Button, Badge, Empty, cx 
 import { eur, pct, CATEGORY_LABEL } from '../lib/format';
 import type { ScoreFactorKey, TechClass } from '../types';
 
+const SOURCES: { use: string; url: string; label: string; type: string }[] = [
+  { use: 'Analyse activities, not whole jobs; feasibility is not adoption; ~59% of manufacturing activities technically automatable', url: 'https://www.mckinsey.com/capabilities/tech-and-ai/our-insights/where-machines-could-replace-humans-and-where-they-cant-yet', label: 'McKinsey: Where machines could replace humans', type: 'Consulting research' },
+  { use: '~57% of US work hours technically automatable (a potential, not a forecast)', url: 'https://www.mckinsey.com/no/our-insights/agents-robots-and-us-skill-partnerships-in-the-age-of-ai', label: 'McKinsey: Agents, robots and us', type: 'Consulting research' },
+  { use: 'Rule-based, high-volume, low-complexity processes suit RPA', url: 'https://icaew.com/technical/technology/finance-in-a-digital-world/rpa-for-finance-professionals/where-could-rpa-work-for-your-business', label: 'ICAEW: Where could RPA work', type: 'Professional body' },
+  { use: 'RPA suitability attributes: rule-based, volume, exceptions, stability, structured input', url: 'https://appian.com/blog/2020/the-best-use-cases-for-rpa', label: 'Appian: Best use cases for RPA', type: 'Vendor blog' },
+  { use: 'Academic suitability criteria and score', url: 'https://www.scitepress.org/Papers/2020/98867/98867.pdf', label: 'SciTePress 2020 paper', type: 'Conference paper' },
+  { use: 'Rule-based suitability method (RRPA)', url: 'https://espace2.etsmtl.ca/29021/1/Benzarti-I-2024-29021.pdf', label: 'Benzarti 2024, ETS Montreal', type: 'Thesis' },
+  { use: '1/3/5 scoring; try Lean or Six Sigma first for judgement-heavy processes', url: 'https://www.morganfranklin.com/?p=11502', label: 'MorganFranklin', type: 'Consultancy' },
+  { use: 'Rule of Five for RPA process selection', url: 'https://www.forrester.com/report/Use-The-Rule-Of-Five-To-Find-The-Right-RPA-Process/RES144074', label: 'Forrester: Rule of Five', type: 'Analyst (paywalled)' },
+  { use: 'ROI and payback formulas; cobot arm under half of deployed cost; 12-18 month payback', url: 'https://www.evsint.com/cobot-roi-calculator-sme-manufacturing/', label: 'EVS: Cobot ROI calculator', type: 'Vendor blog' },
+  { use: 'Cobot payback 6-12 months vs 2-5 years for large robots', url: 'https://www.aerospace.co.uk/news/beyond-the-price-tag-the-obvious-and-hidden-roi-of-cobots/', label: 'Aerospace.co.uk: ROI of cobots', type: 'Vendor blog' },
+  { use: 'Cobot price range about USD 25k-75k', url: 'https://standardbots.com/guides/robots-for-manufacturers-a-guide', label: 'Standard Bots guide', type: 'Vendor guide' },
+  { use: 'Payback method for robot economics (Amortisationsrechnung)', url: 'https://www.ipa.fraunhofer.de/content/dam/ipa/Leitfaden_Wirtschaftlichkeit_final.pdf', label: 'Fraunhofer IPA: Leitfaden Wirtschaftlichkeit', type: 'Research institute' },
+  { use: 'Cost-benefit model for robots in SME production under uncertain data', url: 'https://publica.fraunhofer.de/handle/publica/282741', label: 'Fraunhofer Publica', type: 'Doctoral thesis' },
+  { use: 'Investment calculation standard (payback, NPV, IRR)', url: 'https://www.din.de/en/wdc-beuth:din21:144665031/toc-1815206/download', label: 'VDI 6025', type: 'Standard' },
+  { use: 'Process for choosing automation hardware', url: 'https://www.ipt.fraunhofer.de/content/dam/ipt/de/documents/praesentationen/133_referenzfolie_automatisierungskonzepte.pdf', label: 'Fraunhofer IPT: Automatisierungskonzepte', type: 'Research institute' },
+  { use: 'German SME context: where AI pays off and where a simpler solution is enough', url: 'https://www.ihk.de/regensburg/fachthemen/digitalisierung/kuenstliche-intelligenz/datenmanagement-7188936', label: 'IHK Regensburg', type: 'Chamber of commerce' },
+  { use: 'German SME AI handbook', url: 'https://www.ptw.tu-darmstadt.de/media/fachgebietptw/dokumente_3/wissenssammlung_ptw/leitfaeden_2/Handbuch-Kuenstliche-Intelligenz_Mittelstand-Digital-Zentrum-Kaiserslautern.pdf', label: 'Mittelstand-Digital Zentrum Kaiserslautern', type: 'Public programme' },
+];
+
 const FACTORS: { key: ScoreFactorKey; label: string; hint: string; color: string }[] = [
   { key: 'labour', label: 'Labour cost', hint: 'Annual labour cost at the station', color: '#636f30' },
   { key: 'repetitiveness', label: 'Repetitiveness', hint: 'Identical motions all shift', color: '#b9874a' },
@@ -192,6 +212,32 @@ export default function AssumptionsPage() {
           ))}
         </dl>
         <p className="mt-4 text-xs text-ink-400">Example: a cobot palletizer at {eur(120000)} capex with 20% integration is a {eur(144000)} investment; saving {eur(70000)}/yr with {eur(6000)}/yr running cost pays back in {(144000 / 64000).toFixed(1)} years.</p>
+      </Card>
+
+      <Card className="mt-6" title={<span className="inline-flex items-center gap-2"><ShieldCheck size={15} className="text-brand-600" /> Methods & sources</span>} subtitle="What the method is built on, and where to check it.">
+        <ul className="mb-4 grid gap-2 text-sm text-ink-700 md:grid-cols-2">
+          <li><b>Activities, not jobs:</b> each station or office process is scored on its own (McKinsey).</li>
+          <li><b>Suitability criteria:</b> rule-based, structured input, few exceptions, stability, system access, rated 1/3/5 (RPA literature, MorganFranklin).</li>
+          <li><b>Fix before automate:</b> judgement-heavy or unstable processes go to Lean / standardisation first.</li>
+          <li><b>Pay-off:</b> static payback, NPV and IRR per VDI 6025 and the Fraunhofer IPA payback method, with best / worst ranges and Monte Carlo.</li>
+        </ul>
+        <div className="overflow-x-auto">
+          <table className="w-full min-w-[640px] text-sm">
+            <thead className="text-left text-[11px] uppercase tracking-wider text-ink-500"><tr><th className="py-2 pr-3">Used for</th><th className="pr-3">Source</th><th>Type</th></tr></thead>
+            <tbody className="divide-y divide-ink-100">
+              {SOURCES.map((s) => (
+                <tr key={s.url}>
+                  <td className="py-2 pr-3 text-xs text-ink-600">{s.use}</td>
+                  <td className="py-2 pr-3"><a href={s.url} target="_blank" rel="noreferrer" className="text-xs font-medium text-brand-700 underline hover:text-brand-800">{s.label}</a></td>
+                  <td className="py-2"><Badge>{s.type}</Badge></td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <p className="mt-4 rounded-xl bg-amber-50 px-3 py-2 text-xs text-amber-900">
+          <b>Honest note:</b> the cost, saving and duration values in the technology catalogues (line and office) are planning assumptions, not quotes and not sourced. Replace them with 2–3 integrator or vendor quotes before investing. Vendor blogs are used for ranges only, never as proof.
+        </p>
       </Card>
     </>
   );

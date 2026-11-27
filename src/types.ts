@@ -223,6 +223,14 @@ export interface AnalysisBundle {
   roadmap: RoadmapItem[];
   monteCarlo: MonteCarloResult;        // portfolio-level
   sensitivity: SensitivityItem[];      // portfolio-level, sorted by swing desc
+  verdicts: StationVerdict[];          // per station: now / quick / fix / no / done
+}
+
+export interface StationVerdict {
+  stationId: string;
+  verdict: Verdict;
+  label: string;
+  message: string;
 }
 
 // ---------------------------------------------------------------- AI capture

@@ -1,6 +1,8 @@
 import { Link } from 'react-router-dom';
 import { ArrowRight, Target, Cpu, PiggyBank, Video, AlertTriangle, CheckCircle2 } from 'lucide-react';
-import { useAnalysis, useApp } from '../store';
+import { useAnalysis, useApp, useOffice } from '../store';
+import { VerdictChip, VERDICT_ORDER, VERDICT_STYLE } from '../components/VerdictChip';
+import { fmtMonths } from '../engine/office';
 import { Badge, Card, PageHeader, ScoreBar, Stat } from '../components/ui';
 import { eur, num, pct, years, STATION_TYPE_LABEL } from '../lib/format';
 
@@ -13,6 +15,9 @@ export default function Overview() {
   const techName = (id?: string) => catalog.find((t) => t.id === id)?.name ?? '—';
   const top = b.scores.filter((s) => s.automatable).slice(0, 3);
   const pf = b.portfolio;
+  const off = useOffice();
+  const vcount = (v: string) => (b.verdicts ?? []).filter((x) => x.verdict === v).length;
+  const noList = (b.verdicts ?? []).filter((v) => v.verdict === 'no' || v.verdict === 'fix');
 
   return (
     <div>
@@ -72,6 +77,35 @@ export default function Overview() {
             <CheckCircle2 size={14} className="mr-1 inline" />
             {pf.selected.length} projects fit your budget. Freed operators can move to roles you currently can't fill.
           </div>
+        </Card>
+      </div>
+
+      <div className="mt-6 grid gap-5 lg:grid-cols-2">
+        <Card title="Verdicts: where we say yes, and where we say no" actions={<Link to="/opportunities" className="text-xs font-semibold text-brand-600">Details →</Link>}>
+          <div className="grid grid-cols-5 gap-2 text-center">
+            {VERDICT_ORDER.map((v) => (
+              <Link key={v} to="/opportunities" className="rounded-xl border border-ink-100 px-1 py-2 hover:bg-ink-50">
+                <div className="text-2xl font-bold tabular-nums" style={{ color: VERDICT_STYLE[v].dot }}>{vcount(v)}</div>
+                <div className="text-[10px] leading-tight text-ink-500">{VERDICT_STYLE[v].name}</div>
+              </Link>
+            ))}
+          </div>
+          {noList.length > 0 && (
+            <ul className="mt-3 space-y-1.5 text-xs text-ink-600">
+              {noList.slice(0, 3).map((v) => (
+                <li key={v.stationId} className="flex items-start gap-2"><VerdictChip verdict={v.verdict} label={stationName(v.stationId)} /><span className="line-clamp-2">{v.message}</span></li>
+              ))}
+            </ul>
+          )}
+        </Card>
+        <Card title="Beyond the line: office & admin" actions={<Link to="/office" className="text-xs font-semibold text-brand-600">Details →</Link>}>
+          <dl className="grid grid-cols-2 gap-3 text-sm sm:grid-cols-4">
+            <div><dt className="text-xs text-ink-500">Processes</dt><dd className="text-lg font-semibold tabular-nums">{off.portfolio.inWaves} / {off.portfolio.count}</dd><dd className="text-[10px] text-ink-400">in waves 1 + 2</dd></div>
+            <div><dt className="text-xs text-ink-500">Investment</dt><dd className="text-lg font-semibold tabular-nums">{eur(off.portfolio.K)}</dd></div>
+            <div><dt className="text-xs text-ink-500">Net / yr</dt><dd className="text-lg font-semibold tabular-nums text-emerald-700">{eur(off.portfolio.N)}</dd></div>
+            <div><dt className="text-xs text-ink-500">Payback</dt><dd className="text-lg font-semibold tabular-nums">{fmtMonths(off.portfolio.pay)}</dd><dd className="text-[10px] text-ink-400">{fmtMonths(off.portfolio.payBest)}–{fmtMonths(off.portfolio.payWorst)}</dd></div>
+          </dl>
+          <p className="mt-3 text-xs text-ink-500">Software for order entry, delivery notes, HACCP logs and reports: {num(off.portfolio.freed)} hours freed per year (not cash until redeployed).</p>
         </Card>
       </div>
 

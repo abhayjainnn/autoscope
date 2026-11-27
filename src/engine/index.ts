@@ -6,6 +6,7 @@ import { buildPortfolio, computeRoi } from './roi';
 import { runMonteCarlo } from './montecarlo';
 import { computeSensitivity } from './sensitivity';
 import { buildRoadmap } from './roadmap';
+import { computeVerdicts } from './verdict';
 
 export { analyzeLine, operatingHoursPerYear, effectiveRate, ERGO_HIGH_KG, ERGO_MEDIUM_KG } from './lineSim';
 export { scoreStations } from './scoring';
@@ -14,6 +15,8 @@ export { computeRoi, buildPortfolio, npvOf, irrOf, CONTRIBUTION_MARGIN } from '.
 export { runMonteCarlo } from './montecarlo';
 export { computeSensitivity } from './sensitivity';
 export { buildRoadmap, phaseOf } from './roadmap';
+export { computeVerdicts, VERDICT_LABEL, VERDICT_RULES } from './verdict';
+export { evaluateOffice, OFFICE_CRITERIA } from './office';
 
 /** Full deterministic analysis. Pure function of its inputs. */
 export function runAnalysis(profile: CompanyProfile, line: Line, assumptions: Assumptions, catalog: TechClass[]): AnalysisBundle {
@@ -32,7 +35,8 @@ export function runAnalysis(profile: CompanyProfile, line: Line, assumptions: As
   };
   const monteCarlo = runMonteCarlo(profile, portfolio, assumptions);
   const sensitivity = computeSensitivity(profile, portfolio);
-  return { line: la, scores, recommendations, roi, portfolio, roadmap, monteCarlo, sensitivity };
+  const verdicts = computeVerdicts(safeLine.stations, scores, recommendations, roi, la);
+  return { line: la, scores, recommendations, roi, portfolio, roadmap, monteCarlo, sensitivity, verdicts };
 }
 
 /** The line as it would look after the portfolio is implemented (for before/after views). */

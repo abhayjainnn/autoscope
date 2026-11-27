@@ -1,7 +1,8 @@
 import { Printer, ScanSearch, Target, Cpu, PiggyBank, Map as MapIcon, ShieldCheck } from 'lucide-react';
 import type { ReactNode } from 'react';
 import { Button, PageHeader } from '../components/ui';
-import { useAnalysis, useApp } from '../store';
+import { useAnalysis, useApp, useOffice } from '../store';
+import { fmtMonths } from '../engine/office';
 import { eur, pct, years, num, PHASE_LABEL, SUBSECTOR_LABEL, STATION_TYPE_LABEL } from '../lib/format';
 import type { AnalysisBundle, Phase } from '../types';
 
@@ -19,6 +20,10 @@ const PHASE_COLOR: Record<Phase, string> = { quick_win: '#10b981', mid_term: '#6
 
 export default function Report() {
   const a: AnalysisBundle = useAnalysis();
+  const off = useOffice();
+  const offTop = off.rows.filter((r) => r.t && r.base && (r.wave === 1 || r.wave === 2)).slice(0, 3);
+  const stNames = useApp((s) => s.line.stations);
+  const noV = (a.verdicts ?? []).filter((v) => v.verdict === 'no' || v.verdict === 'fix');
   const profile = useApp((s) => s.profile);
   const line = useApp((s) => s.line);
   const catalog = useApp((s) => s.catalog);
@@ -206,6 +211,36 @@ export default function Report() {
               Beyond current budget: {overBudget.map((o) => `${stName(o.stationId)} (${eur(o.investment)})`).join(', ')}.
             </div>
           )}
+        </section>
+
+        {/* Verdicts + office quick wins */}
+        <section className="report-avoid mt-4 grid gap-4 sm:grid-cols-2">
+          <div>
+            <SectionTitle icon={<Target size={12} />}>Where we say no</SectionTitle>
+            {noV.length ? (
+              <ul className="mt-1 space-y-0.5 text-[10px] text-ink-600">
+                {noV.map((v) => (
+                  <li key={v.stationId}><b className="text-ink-800">{stNames.find((s) => s.id === v.stationId)?.name ?? v.stationId}</b> ({v.label.toLowerCase()}): {v.message}</li>
+                ))}
+              </ul>
+            ) : <p className="mt-1 text-[10px] text-ink-500">Every remaining manual station has a positive case.</p>}
+          </div>
+          <div>
+            <SectionTitle icon={<Cpu size={12} />}>Office & admin quick wins</SectionTitle>
+            {offTop.length ? (
+              <>
+                <ul className="mt-1 space-y-0.5 text-[10px]">
+                  {offTop.map((r) => (
+                    <li key={r.p.id} className="flex justify-between gap-2 border-b border-dotted border-ink-200 py-0.5">
+                      <span className="text-ink-700"><b>{r.p.name}</b> · {r.t!.name}</span>
+                      <span className="whitespace-nowrap font-medium text-ink-800">{eur(r.base!.K)} · {fmtMonths(r.base!.pay)}</span>
+                    </li>
+                  ))}
+                </ul>
+                <div className="mt-1 text-[9.5px] text-ink-400">Waves 1+2: {eur(off.portfolio.K)} invest, {eur(off.portfolio.N)}/yr net, payback {fmtMonths(off.portfolio.pay)} ({fmtMonths(off.portfolio.payBest)}–{fmtMonths(off.portfolio.payWorst)}), {num(off.portfolio.freed)} h/yr freed.</div>
+              </>
+            ) : <p className="mt-1 text-[10px] text-ink-500">No office processes analysed.</p>}
+          </div>
         </section>
 
         {/* Assumptions + disclaimer */}

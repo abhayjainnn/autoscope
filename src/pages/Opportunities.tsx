@@ -8,7 +8,8 @@ import { useAnalysis, useApp } from '../store';
 import { PageHeader, Card, Badge, ScoreBar, Empty, Stat, cx } from '../components/ui';
 import { eur, pct, STATION_TYPE_LABEL } from '../lib/format';
 import AiExplain from '../components/AiExplain';
-import type { AnalysisBundle, OpportunityScore, ScoreFactorKey, Station, StationAnalysis, RoiResult } from '../types';
+import { VerdictChip, VERDICT_ORDER, VERDICT_STYLE } from '../components/VerdictChip';
+import type { AnalysisBundle, OpportunityScore, ScoreFactorKey, Station, StationAnalysis, RoiResult, StationVerdict, Verdict } from '../types';
 
 const FACTOR_COLOR: Record<ScoreFactorKey, string> = {
   labour: '#636f30',
@@ -61,7 +62,7 @@ function FactorLegend() {
   );
 }
 
-function StationCard({ score, station, sa, roi, muted }: { score: OpportunityScore; station?: Station; sa?: StationAnalysis; roi?: RoiResult; muted?: boolean }) {
+function StationCard({ score, station, sa, roi, muted, verdict }: { score: OpportunityScore; station?: Station; sa?: StationAnalysis; roi?: RoiResult; muted?: boolean; verdict?: StationVerdict }) {
   const [open, setOpen] = useState(false);
   const name = station?.name ?? score.stationId;
   return (
@@ -74,7 +75,7 @@ function StationCard({ score, station, sa, roi, muted }: { score: OpportunitySco
           <div className="flex flex-wrap items-center gap-2">
             <h3 className="truncate text-base font-semibold text-ink-900">{name}</h3>
             {station && <span className="text-xs text-ink-400">{STATION_TYPE_LABEL[station.type] ?? station.type}</span>}
-            {muted ? <Badge>Already automated</Badge> : score.automatable ? <Badge tone="good">Automatable</Badge> : <Badge tone="warn">Low potential</Badge>}
+            {verdict ? <VerdictChip verdict={verdict.verdict} label={verdict.label} /> : muted ? <Badge>Already automated</Badge> : score.automatable ? <Badge tone="good">Automatable</Badge> : <Badge tone="warn">Low potential</Badge>}
             {sa?.isBottleneck && <Badge tone="bad">Bottleneck</Badge>}
           </div>
           <div className="mt-1 flex flex-wrap gap-x-4 gap-y-1 text-xs text-ink-500">
@@ -89,6 +90,12 @@ function StationCard({ score, station, sa, roi, muted }: { score: OpportunitySco
           <div className="mt-1.5"><ScoreBar value={score.score} tone={muted ? 'brand' : scoreTone(score.score)} /></div>
         </div>
       </div>
+
+      {verdict && (
+        <p className="mt-3 rounded-xl px-3 py-2 text-sm text-ink-700" style={{ background: VERDICT_STYLE[verdict.verdict].dot + '14' }}>
+          <span className="font-semibold">{verdict.label}:</span> {verdict.message}
+        </p>
+      )}
 
       <div className="mt-4">
         <div className="mb-1.5 text-[11px] font-medium uppercase tracking-wider text-ink-400">Score composition</div>
@@ -206,6 +213,11 @@ function ImpactEffort({ points }: { points: Pt[] }) {
 export default function Opportunities() {
   const analysis: AnalysisBundle = useAnalysis();
   const stations = useApp((s) => s.line.stations);
+  const [vf, setVf] = useState<Verdict | 'all'>('all');
+  const vmap = useMemo(() => new Map((analysis.verdicts ?? []).map((v) => [v.stationId, v])), [analysis]);
+  const vcount = (v: Verdict) => (analysis.verdicts ?? []).filter((x) => x.verdict === v).length;
+  const notAutomate = (analysis.verdicts ?? []).filter((v) => v.verdict === 'fix' || v.verdict === 'no');
+  const passF = (id: string) => vf === 'all' || vmap.get(id)?.verdict === vf;
 
   const data = useMemo(() => {
     const st = new Map(stations.map((s) => [s.id, s]));
@@ -305,6 +317,17 @@ export default function Opportunities() {
         </div>
       </div>
 
+      <Card className="mb-6" title="Verdict per station" subtitle="A good advisor can say no. Filter the list by verdict.">
+        <div className="flex flex-wrap gap-2">
+          <button onClick={() => setVf('all')} className={cx('rounded-full px-3 py-1 text-xs font-semibold ring-1 transition', vf === 'all' ? 'bg-ink-900 text-white ring-ink-900' : 'bg-white text-ink-600 ring-ink-200 hover:bg-ink-50')}>All ({stations.length})</button>
+          {VERDICT_ORDER.map((v) => (
+            <button key={v} onClick={() => setVf(vf === v ? 'all' : v)} className={cx('rounded-full transition', vf === v ? 'ring-2 ring-ink-400 ring-offset-1' : 'opacity-90 hover:opacity-100')}>
+              <VerdictChip verdict={v} label={VERDICT_STYLE[v].name + ' (' + vcount(v) + ')'} />
+            </button>
+          ))}
+        </div>
+      </Card>
+
       <div className="mb-3 flex flex-wrap items-end justify-between gap-3">
         <div>
           <h2 className="text-lg font-semibold text-ink-900">Ranked stations</h2>
@@ -314,20 +337,37 @@ export default function Opportunities() {
       </div>
 
       <div className="space-y-4">
-        {data.ranked.map((s) => (
-          <StationCard key={s.stationId} score={s} station={data.st.get(s.stationId)} sa={data.sa.get(s.stationId)} roi={data.roi.get(s.stationId)} />
+        {data.ranked.filter((s) => passF(s.stationId)).map((s) => (
+          <StationCard key={s.stationId} score={s} station={data.st.get(s.stationId)} sa={data.sa.get(s.stationId)} roi={data.roi.get(s.stationId)} verdict={vmap.get(s.stationId)} />
         ))}
+        {data.ranked.filter((s) => passF(s.stationId)).length === 0 && <p className="text-sm text-ink-500">No manual or semi-automatic station has this verdict.</p>}
       </div>
 
       {data.automated.length > 0 && (
         <>
           <h2 className="mb-3 mt-8 text-sm font-semibold uppercase tracking-wider text-ink-400">Already automated</h2>
           <div className="space-y-3">
-            {data.automated.map((s) => (
-              <StationCard key={s.stationId} score={s} station={data.st.get(s.stationId)} sa={data.sa.get(s.stationId)} muted />
+            {data.automated.filter((s) => passF(s.stationId)).map((s) => (
+              <StationCard key={s.stationId} score={s} station={data.st.get(s.stationId)} sa={data.sa.get(s.stationId)} muted verdict={vmap.get(s.stationId)} />
             ))}
           </div>
         </>
+      )}
+
+      {notAutomate.length > 0 && (
+        <Card className="mt-8" title="What we would NOT automate — and why" subtitle="Automating an unstable or unsuitable process only makes the problem faster and more expensive.">
+          <ul className="divide-y divide-ink-100">
+            {notAutomate.map((v) => (
+              <li key={v.stationId} className="flex flex-col gap-1.5 py-3 sm:flex-row sm:items-start sm:gap-4">
+                <div className="w-56 shrink-0">
+                  <div className="font-semibold text-ink-900">{data.st.get(v.stationId)?.name ?? v.stationId}</div>
+                  <div className="mt-1"><VerdictChip verdict={v.verdict} label={v.label} /></div>
+                </div>
+                <p className="text-sm text-ink-600">{v.message}</p>
+              </li>
+            ))}
+          </ul>
+        </Card>
       )}
     </>
   );

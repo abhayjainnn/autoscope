@@ -1,7 +1,8 @@
 import { NavLink, Route, Routes, useLocation } from 'react-router-dom';
 import {
-  Building2, ClipboardList, Briefcase, Workflow, Video, Activity, Target, Cpu, PiggyBank, Map, MessageSquare, FileText, SlidersHorizontal, LayoutDashboard, ScanSearch,
+  Building2, ClipboardList, Briefcase, Workflow, Video, Activity, Target, Cpu, PiggyBank, Map, MessageSquare, FileText, SlidersHorizontal, LayoutDashboard,
 } from 'lucide-react';
+import Logo from './components/Logo';
 import Landing from './pages/Landing';
 import Overview from './pages/Overview';
 import Profile from './pages/Profile';
@@ -59,51 +60,64 @@ const NAV: { group: string; items: { to: string; label: string; icon: typeof Bui
 function Sidebar() {
   const name = useApp((s) => s.profile.name);
   return (
-    <aside className="no-print sticky top-0 hidden h-screen w-64 shrink-0 flex-col border-r border-ink-100 bg-white lg:flex">
-      <NavLink to="/" className="flex items-center gap-2 px-5 py-5">
-        <div className="grid h-9 w-9 place-items-center rounded-xl bg-gradient-to-br from-brand-500 to-brand-700 text-white shadow">
-          <ScanSearch size={18} />
-        </div>
-        <div>
-          <div className="text-base font-extrabold tracking-tight">AutoScope</div>
-          <div className="text-[10px] font-medium uppercase tracking-wider text-ink-400">Vendor-neutral advisor</div>
-        </div>
+    <aside className="no-print sticky top-0 hidden h-screen w-72 shrink-0 flex-col border-r border-ink-200/70 bg-gradient-to-b from-white to-ink-50 lg:flex">
+      <NavLink to="/" className="flex items-center px-6 pb-5 pt-6 transition hover:opacity-90">
+        <Logo size={44} />
       </NavLink>
-      <div className="mx-4 mb-2 truncate rounded-lg bg-ink-50 px-3 py-2 text-xs text-ink-600" title={name}>
-        <span className="text-ink-400">Company · </span>
-        {name}
+      <div className="mx-4 mb-1 flex items-center gap-2.5 rounded-xl border border-ink-200/70 bg-white px-3 py-2.5 shadow-sm" title={name}>
+        <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-sand-100 text-sand-700"><Building2 size={16} /></span>
+        <span className="min-w-0">
+          <span className="block text-[10px] font-semibold uppercase tracking-wider text-ink-400">Company</span>
+          <span className="block truncate text-sm font-semibold text-ink-800">{name}</span>
+        </span>
       </div>
       <nav className="flex-1 overflow-y-auto px-3 pb-6">
         {NAV.map((g) => (
-          <div key={g.group} className="mt-4">
-            <div className="px-2 text-[10px] font-semibold uppercase tracking-wider text-ink-400">{g.group}</div>
+          <div key={g.group} className="mt-5">
+            <div className="px-3 pb-1 text-[10px] font-bold uppercase tracking-[0.16em] text-ink-400">{g.group}</div>
             {g.items.map((it) => (
               <NavLink
                 key={it.to}
                 to={it.to}
                 className={({ isActive }) =>
-                  `mt-0.5 flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm font-medium transition ${isActive ? 'bg-brand-50 text-brand-700' : 'text-ink-600 hover:bg-ink-50'}`
+                  `group relative mt-0.5 flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium transition ${isActive ? 'bg-brand-50 text-brand-800 shadow-sm ring-1 ring-brand-100' : 'text-ink-600 hover:bg-ink-100/70 hover:text-ink-900'}`
                 }
               >
-                <it.icon size={16} />
-                {it.label}
+                {({ isActive }) => (
+                  <>
+                    <span className={`absolute left-0 top-1/2 h-5 w-1 -translate-y-1/2 rounded-r-full bg-brand-600 transition-opacity ${isActive ? 'opacity-100' : 'opacity-0'}`} />
+                    <it.icon size={17} className={isActive ? 'text-brand-600' : 'text-ink-400 group-hover:text-ink-600'} />
+                    {it.label}
+                  </>
+                )}
               </NavLink>
             ))}
           </div>
         ))}
       </nav>
+      <div className="border-t border-ink-200/70 px-6 py-4 text-[11px] text-ink-400">Indicative ranges · validate with integrator quotes</div>
     </aside>
   );
 }
 
 function MobileNav() {
   return (
-    <div className="no-print sticky top-0 z-20 flex gap-1 overflow-x-auto border-b border-ink-100 bg-white px-3 py-2 lg:hidden">
-      {NAV.flatMap((g) => g.items).map((it) => (
-        <NavLink key={it.to} to={it.to} className={({ isActive }) => `shrink-0 rounded-lg px-3 py-1.5 text-xs font-medium ${isActive ? 'bg-brand-50 text-brand-700' : 'text-ink-600'}`}>
-          {it.label}
-        </NavLink>
-      ))}
+    <div className="no-print sticky top-0 z-20 border-b border-ink-200/70 bg-ink-50/90 backdrop-blur-lg lg:hidden">
+      <div className="px-4 pt-3">
+        <NavLink to="/" className="inline-flex"><Logo size={34} tagline={false} /></NavLink>
+      </div>
+      <div className="flex gap-1.5 overflow-x-auto px-3 py-2.5">
+        {NAV.flatMap((g) => g.items).map((it) => (
+          <NavLink
+            key={it.to}
+            to={it.to}
+            className={({ isActive }) => `inline-flex shrink-0 items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold transition ${isActive ? 'bg-brand-600 text-white shadow-sm' : 'bg-white text-ink-600 ring-1 ring-ink-200/70'}`}
+          >
+            <it.icon size={13} />
+            {it.label}
+          </NavLink>
+        ))}
+      </div>
     </div>
   );
 }

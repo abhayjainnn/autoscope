@@ -7,6 +7,8 @@ import { DEMO_PROFILE, DEMO_LINE } from './data/demo';
 import { LINE_TEMPLATES, DEFAULT_ASSUMPTIONS } from './data/templates';
 import { TECH_CATALOG } from './data/catalog';
 import { runAnalysis } from './engine';
+import { evaluateOffice } from './engine/office';
+import { OFFICE_TECH, DEFAULT_OFFICE_GLOBALS, type OfficeGlobals, type OfficeTech, type OfficeTechKey } from './data/officeCatalog';
 
 interface AppState {
   profile: CompanyProfile;
@@ -33,6 +35,11 @@ interface AppState {
   setExtraction: (e: ExtractionResult | null) => void;
   setChat: (c: ChatMessage[]) => void;
   loadDemo: () => void;
+  officeGlobals: OfficeGlobals;
+  officeTech: Record<OfficeTechKey, OfficeTech>;
+  setOfficeGlobals: (g: Partial<OfficeGlobals>) => void;
+  updateOfficeTech: (k: OfficeTechKey, patch: Partial<OfficeTech>) => void;
+  resetOfficeAssumptions: () => void;
 }
 
 const clone = <T,>(x: T): T => JSON.parse(JSON.stringify(x));
@@ -75,6 +82,11 @@ export const useApp = create<AppState>()(
           details: clone(DEMO_DETAILS),
           office: clone(DEMO_OFFICE),
         }),
+      officeGlobals: clone(DEFAULT_OFFICE_GLOBALS),
+      officeTech: clone(OFFICE_TECH),
+      setOfficeGlobals: (g) => set((s) => ({ officeGlobals: { ...s.officeGlobals, ...g } })),
+      updateOfficeTech: (k, patch) => set((s) => ({ officeTech: { ...s.officeTech, [k]: { ...s.officeTech[k], ...patch } } })),
+      resetOfficeAssumptions: () => set({ officeGlobals: clone(DEFAULT_OFFICE_GLOBALS), officeTech: clone(OFFICE_TECH) }),
     }),
     { name: 'autoscope-v2' },
   ),
@@ -97,4 +109,16 @@ export function useTech(id: string | undefined) {
 export function useStation(id: string | undefined) {
   const stations = useApp((s) => s.line.stations);
   return stations.find((t) => t.id === id);
+}
+
+/** Office & admin process evaluation (AutomationCompass formulas), live from the store. */
+export function useOffice() {
+  const office = useApp((s) => s.office);
+  const g = useApp((s) => s.officeGlobals);
+  const t = useApp((s) => s.officeTech);
+  const rate = useApp((s) => s.profile.labourCostPerHour);
+  return useMemo(
+    () => evaluateOffice(office ?? [], { ...OFFICE_TECH, ...(t ?? {}) }, { ...DEFAULT_OFFICE_GLOBALS, ...(g ?? {}) }, rate),
+    [office, g, t, rate],
+  );
 }
