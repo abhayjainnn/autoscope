@@ -145,7 +145,7 @@ export default function Landing() {
       {/* Header */}
       <header className={`sticky top-0 z-40 transition-all duration-300 ${scrolled ? 'border-b border-ink-200/70 bg-ink-50/80 shadow-sm backdrop-blur-lg' : 'border-b border-transparent'}`}>
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3 md:px-8 md:py-4">
-          <a href="#top" aria-label="AutoScope home"><span ref={headerLogo} className="inline-flex" style={{ opacity: introDone ? 1 : 0 }}><Logo size={52} tagline={false} className="sm:hidden" /><Logo size={64} tagline={false} className="hidden sm:inline-flex" /></span></a>
+          <a href="#top" aria-label="AutoScope home"><span ref={headerLogo} className="inline-flex" style={{ opacity: introDone ? 1 : 0 }}><span className="block sm:hidden"><Logo size={52} tagline={false} /></span><span className="hidden sm:block"><Logo size={64} tagline={false} /></span></span></a>
           <nav className="hidden items-center gap-8 text-sm font-medium text-ink-600 md:flex">
             <a href="#how" className="transition hover:text-brand-700">How it works</a>
             <a href="#features" className="transition hover:text-brand-700">Features</a>
