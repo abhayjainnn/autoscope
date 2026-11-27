@@ -103,13 +103,7 @@ export default function Profile() {
             </div>
           </div>
         </div>
-      ) : (
-        <Link to="/questionnaire" className="mb-6 flex items-center gap-3 rounded-2xl border border-sand-200 bg-sand-50 px-4 py-3 text-sm text-sand-700 transition hover:bg-sand-100">
-          <ClipboardList size={18} className="shrink-0" />
-          <span className="flex-1">Don't want to fill this in by hand? <b>Take the 5-minute guided questionnaire</b></span>
-          <ArrowRight size={16} className="shrink-0" />
-        </Link>
-      )}
+      ) : null}
 
       <PageHeader
         eyebrow="Step 1 · Capture"

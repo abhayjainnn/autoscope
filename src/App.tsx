@@ -1,6 +1,6 @@
 import { NavLink, Route, Routes, useLocation } from 'react-router-dom';
 import {
-  Building2, ClipboardList, Briefcase, Workflow, Video, Activity, Target, Cpu, PiggyBank, Map, MessageSquare, FileText, SlidersHorizontal, LayoutDashboard,
+  Building2, Briefcase, Workflow, Video, Activity, Target, Cpu, PiggyBank, Map, MessageSquare, FileText, SlidersHorizontal, LayoutDashboard,
 } from 'lucide-react';
 import Logo from './components/Logo';
 import Landing from './pages/Landing';
@@ -25,7 +25,6 @@ const NAV: { group: string; items: { to: string; label: string; icon: typeof Bui
   {
     group: '1 · Capture',
     items: [
-      { to: '/questionnaire', label: 'Guided questionnaire', icon: ClipboardList },
       { to: '/profile', label: 'Company profile', icon: Building2 },
       { to: '/line', label: 'Line Builder', icon: Workflow },
       { to: '/capture', label: 'AI Process Capture', icon: Video },
