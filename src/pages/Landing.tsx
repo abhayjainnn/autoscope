@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   ArrowRight, Target, Cpu, PiggyBank, ShieldCheck, Video, Scale, Eye, ClipboardList, Workflow, Activity, Sparkles,
@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import { useApp } from '../store';
 import Logo from '../components/Logo';
+import IntroSplash, { introWillPlay } from '../components/IntroSplash';
 import { Reveal, useInView } from '../hooks/useReveal';
 
 const LANDING_CSS = `
@@ -126,6 +127,8 @@ export default function Landing() {
   const nav = useNavigate();
   const loadDemo = useApp((s) => s.loadDemo);
   const [scrolled, setScrolled] = useState(false);
+  const [introDone, setIntroDone] = useState(() => !introWillPlay());
+  const headerLogo = useRef<HTMLSpanElement>(null);
   useEffect(() => {
     const on = () => setScrolled(window.scrollY > 12);
     on();
@@ -137,11 +140,12 @@ export default function Landing() {
   return (
     <div className="min-h-screen overflow-x-hidden bg-ink-50 text-ink-900">
       <style>{LANDING_CSS}</style>
+      <IntroSplash targetRef={headerLogo} onDone={() => setIntroDone(true)} />
 
       {/* Header */}
       <header className={`sticky top-0 z-40 transition-all duration-300 ${scrolled ? 'border-b border-ink-200/70 bg-ink-50/80 shadow-sm backdrop-blur-lg' : 'border-b border-transparent'}`}>
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3 md:px-8 md:py-4">
-          <a href="#top" aria-label="AutoScope home"><Logo size={44} tagline={false} className="sm:hidden" /><Logo size={48} className="hidden sm:inline-flex" /></a>
+          <a href="#top" aria-label="AutoScope home"><span ref={headerLogo} className="inline-flex" style={{ opacity: introDone ? 1 : 0 }}><Logo size={52} tagline={false} className="sm:hidden" /><Logo size={64} tagline={false} className="hidden sm:inline-flex" /></span></a>
           <nav className="hidden items-center gap-8 text-sm font-medium text-ink-600 md:flex">
             <a href="#how" className="transition hover:text-brand-700">How it works</a>
             <a href="#features" className="transition hover:text-brand-700">Features</a>

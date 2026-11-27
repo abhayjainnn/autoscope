@@ -1,14 +1,17 @@
+import { useId } from 'react';
+
 /** AutoScope brand mark: a scope reticle framing a bottle on a conveyor. */
 export function LogoMark({ size = 40, className = '' }: { size?: number; className?: string }) {
+  const gid = 'as-logo-bg-' + useId().replace(/:/g, '');
   return (
     <svg width={size} height={size} viewBox="0 0 48 48" className={className} aria-hidden="true">
       <defs>
-        <linearGradient id="as-logo-bg" x1="0" y1="0" x2="1" y2="1">
+        <linearGradient id={gid} x1="0" y1="0" x2="1" y2="1">
           <stop offset="0" stopColor="#7d8b3f" />
           <stop offset="1" stopColor="#353c20" />
         </linearGradient>
       </defs>
-      <rect x="1" y="1" width="46" height="46" rx="13" fill="url(#as-logo-bg)" />
+      <rect x="1" y="1" width="46" height="46" rx="13" fill={`url(#${gid})`} />
       {/* reticle */}
       <circle cx="24" cy="22" r="13" fill="none" stroke="#f7efdc" strokeWidth="2.2" />
       <path d="M24 5.5v6M24 32.5v4M7.5 22h6M34.5 22h6" stroke="#f7efdc" strokeWidth="2.2" strokeLinecap="round" />
