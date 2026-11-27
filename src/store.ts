@@ -1,7 +1,8 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { useMemo } from 'react';
-import type { Assumptions, ChatMessage, CompanyProfile, ExtractionResult, Line, Station, SubSector, TechClass } from './types';
+import type { Assumptions, ChatMessage, CompanyProfile, ExtractionResult, Line, OfficeProcess, PlantDetails, Station, SubSector, TechClass } from './types';
+import { DEMO_DETAILS, DEMO_OFFICE } from './data/demoDetails';
 import { DEMO_PROFILE, DEMO_LINE } from './data/demo';
 import { LINE_TEMPLATES, DEFAULT_ASSUMPTIONS } from './data/templates';
 import { TECH_CATALOG } from './data/catalog';
@@ -14,6 +15,11 @@ interface AppState {
   catalog: TechClass[];
   lastExtraction: ExtractionResult | null;
   chat: ChatMessage[];
+  details: PlantDetails;
+  office: OfficeProcess[];
+  setDetails: (d: Partial<PlantDetails>) => void;
+  setOffice: (o: OfficeProcess[]) => void;
+  updateOffice: (id: string, patch: Partial<OfficeProcess>) => void;
   setProfile: (p: Partial<CompanyProfile>) => void;
   setLine: (l: Partial<Line>) => void;
   setStations: (s: Station[]) => void;
@@ -40,6 +46,11 @@ export const useApp = create<AppState>()(
       catalog: clone(TECH_CATALOG),
       lastExtraction: null,
       chat: [],
+      details: clone(DEMO_DETAILS),
+      office: clone(DEMO_OFFICE),
+      setDetails: (d) => set((s) => ({ details: { ...s.details, ...d } })),
+      setOffice: (office) => set({ office }),
+      updateOffice: (id, patch) => set((s) => ({ office: s.office.map((p) => (p.id === id ? { ...p, ...patch } : p)) })),
       setProfile: (p) => set((s) => ({ profile: { ...s.profile, ...p } })),
       setLine: (l) => set((s) => ({ line: { ...s.line, ...l } })),
       setStations: (stations) => set((s) => ({ line: { ...s.line, stations } })),
@@ -61,9 +72,11 @@ export const useApp = create<AppState>()(
           catalog: clone(TECH_CATALOG),
           lastExtraction: null,
           chat: [],
+          details: clone(DEMO_DETAILS),
+          office: clone(DEMO_OFFICE),
         }),
     }),
-    { name: 'autoscope-v1' },
+    { name: 'autoscope-v2' },
   ),
 );
 

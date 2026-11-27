@@ -116,8 +116,8 @@ export function LineAnimation({ line, analysis, running = true }: { line: Line; 
       <svg viewBox={`0 0 ${width} ${height}`} className="block h-auto w-full" style={{ minWidth: Math.min(width, 120 + n * 110) }}>
         <defs>
           <pattern id="belt" width="12" height="12" patternUnits="userSpaceOnUse">
-            <rect width="12" height="12" fill="#c3c9d4" />
-            <rect width="6" height="12" fill="#b4bbc8">
+            <rect width="12" height="12" fill="#cdc4ae" />
+            <rect width="6" height="12" fill="#c9bfa8">
               {running && <animate attributeName="x" from="0" to="12" dur="0.6s" repeatCount="indefinite" />}
             </rect>
           </pattern>
@@ -128,8 +128,8 @@ export function LineAnimation({ line, analysis, running = true }: { line: Line; 
         </defs>
 
         {/* source + sink labels */}
-        <text x={8} y={BELT_Y + 4} fontSize={10} fill="#8f97a6" fontWeight={600}>IN</text>
-        <text x={width - 30} y={BELT_Y + 4} fontSize={10} fill="#8f97a6" fontWeight={600}>OUT</text>
+        <text x={8} y={BELT_Y + 4} fontSize={10} fill="#a39a84" fontWeight={600}>IN</text>
+        <text x={width - 30} y={BELT_Y + 4} fontSize={10} fill="#a39a84" fontWeight={600}>OUT</text>
 
         {/* stations (behind belt) */}
         {line.stations.map((s, i) => {
@@ -152,24 +152,24 @@ export function LineAnimation({ line, analysis, running = true }: { line: Line; 
               <text x={x + ST_W / 2} y={90} textAnchor="middle" fontSize={13} fontWeight={700} fill={color}>
                 {Math.round(u * 100)}%
               </text>
-              <text x={x + ST_W / 2} y={102} textAnchor="middle" fontSize={8.5} fill="#677084">utilization</text>
+              <text x={x + ST_W / 2} y={102} textAnchor="middle" fontSize={8.5} fill="#7d7563">utilization</text>
               {/* operators */}
               {ops > 0 ? (
                 <g>
                   {Array.from({ length: shown }).map((_, k) => (
-                    <Person key={k} x={x + ST_W / 2 - (shown - 1) * 7 + k * 14 - (ops > 3 ? 8 : 0)} y={52} color={s.level === 'manual' ? '#d97706' : '#4d5567'} />
+                    <Person key={k} x={x + ST_W / 2 - (shown - 1) * 7 + k * 14 - (ops > 3 ? 8 : 0)} y={52} color={s.level === 'manual' ? '#d97706' : '#5f584a'} />
                   ))}
-                  <text x={x + ST_W / 2 + (shown - 1) * 7 + 10 - (ops > 3 ? 8 : 0)} y={55} fontSize={10} fontWeight={700} fill="#3a4152">
+                  <text x={x + ST_W / 2 + (shown - 1) * 7 + 10 - (ops > 3 ? 8 : 0)} y={55} fontSize={10} fontWeight={700} fill="#474237">
                     ×{num(ops, 1)}
                   </text>
                 </g>
               ) : (
                 <text x={x + ST_W / 2} y={55} textAnchor="middle" fontSize={9} fill="#10b981" fontWeight={600}>lights-out</text>
               )}
-              <text x={x + ST_W / 2} y={180} textAnchor="middle" fontSize={10.5} fontWeight={600} fill="#252b38">
+              <text x={x + ST_W / 2} y={180} textAnchor="middle" fontSize={10.5} fontWeight={600} fill="#2f2c25">
                 {s.name.length > 16 ? s.name.slice(0, 15) + '…' : s.name}
               </text>
-              <text x={x + ST_W / 2} y={194} textAnchor="middle" fontSize={9} fill="#8f97a6">
+              <text x={x + ST_W / 2} y={194} textAnchor="middle" fontSize={9} fill="#a39a84">
                 {s.ratePerMin > 0 ? `${num(a?.effectiveRatePerMin ?? 0, 1)}/min eff.` : 'off-flow task'}
               </text>
             </g>
@@ -186,8 +186,8 @@ export function LineAnimation({ line, analysis, running = true }: { line: Line; 
 
         {/* produced counter */}
         <g transform={`translate(${width - 120}, 18)`}>
-          <rect width={110} height={24} rx={12} fill="#eef7ff" />
-          <text x={55} y={16} textAnchor="middle" fontSize={10.5} fontWeight={700} fill="#1557de">
+          <rect width={110} height={24} rx={12} fill="#f6f7ee" />
+          <text x={55} y={16} textAnchor="middle" fontSize={10.5} fontWeight={700} fill="#4d5727">
             {S?.produced ?? 0} {line.unitName.slice(0, 10)} out
           </text>
         </g>

@@ -5,12 +5,12 @@ import { eur, pct, CATEGORY_LABEL } from '../lib/format';
 import type { ScoreFactorKey, TechClass } from '../types';
 
 const FACTORS: { key: ScoreFactorKey; label: string; hint: string; color: string }[] = [
-  { key: 'labour', label: 'Labour cost', hint: 'Annual labour cost at the station', color: '#1d6ef1' },
-  { key: 'repetitiveness', label: 'Repetitiveness', hint: 'Identical motions all shift', color: '#8b5cf6' },
+  { key: 'labour', label: 'Labour cost', hint: 'Annual labour cost at the station', color: '#636f30' },
+  { key: 'repetitiveness', label: 'Repetitiveness', hint: 'Identical motions all shift', color: '#b9874a' },
   { key: 'ergonomics', label: 'Ergonomics', hint: 'Kg lifted and injury risk', color: '#f59e0b' },
   { key: 'quality', label: 'Quality / scrap', hint: 'Scrap cost and error rate', color: '#ef4444' },
   { key: 'bottleneck', label: 'Bottleneck', hint: 'Utilisation vs. takt', color: '#10b981' },
-  { key: 'stability', label: 'Process stability', hint: 'Low variability = easier to automate', color: '#64748b' },
+  { key: 'stability', label: 'Process stability', hint: 'Low variability = easier to automate', color: '#7d7563' },
 ];
 
 const FORMULAS: { term: string; def: string; formula: string }[] = [

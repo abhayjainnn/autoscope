@@ -1,6 +1,6 @@
 import { NavLink, Route, Routes, useLocation } from 'react-router-dom';
 import {
-  Building2, Workflow, Video, Activity, Target, Cpu, PiggyBank, Map, MessageSquare, FileText, SlidersHorizontal, LayoutDashboard, ScanSearch,
+  Building2, ClipboardList, Briefcase, Workflow, Video, Activity, Target, Cpu, PiggyBank, Map, MessageSquare, FileText, SlidersHorizontal, LayoutDashboard, ScanSearch,
 } from 'lucide-react';
 import Landing from './pages/Landing';
 import Overview from './pages/Overview';
@@ -15,6 +15,8 @@ import Roadmap from './pages/Roadmap';
 import Advisor from './pages/Advisor';
 import Report from './pages/Report';
 import AssumptionsPage from './pages/Assumptions';
+import Questionnaire from './pages/Questionnaire';
+import Office from './pages/Office';
 import { useApp } from './store';
 
 const NAV: { group: string; items: { to: string; label: string; icon: typeof Building2 }[] }[] = [
@@ -22,6 +24,7 @@ const NAV: { group: string; items: { to: string; label: string; icon: typeof Bui
   {
     group: '1 · Capture',
     items: [
+      { to: '/questionnaire', label: 'Guided questionnaire', icon: ClipboardList },
       { to: '/profile', label: 'Company profile', icon: Building2 },
       { to: '/line', label: 'Line Builder', icon: Workflow },
       { to: '/capture', label: 'AI Process Capture', icon: Video },
@@ -32,6 +35,7 @@ const NAV: { group: string; items: { to: string; label: string; icon: typeof Bui
     items: [
       { to: '/analysis', label: 'Line Analysis', icon: Activity },
       { to: '/opportunities', label: 'Opportunities', icon: Target },
+      { to: '/office', label: 'Office & admin', icon: Briefcase },
     ],
   },
   { group: '3 · How', items: [{ to: '/technology', label: 'Technology', icon: Cpu }] },
@@ -107,6 +111,7 @@ function MobileNav() {
 export default function App() {
   const { pathname } = useLocation();
   if (pathname === '/') return <Landing />;
+  if (pathname === '/questionnaire') return <Questionnaire />;
   return (
     <div className="flex min-h-screen">
       <Sidebar />
@@ -126,6 +131,7 @@ export default function App() {
             <Route path="/advisor" element={<Advisor />} />
             <Route path="/report" element={<Report />} />
             <Route path="/assumptions" element={<AssumptionsPage />} />
+            <Route path="/office" element={<Office />} />
             <Route path="*" element={<Overview />} />
           </Routes>
         </main>

@@ -190,19 +190,19 @@ export default function Analysis() {
           <div className="h-72">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={chartData} margin={{ top: 16, right: 8, left: -12, bottom: 0 }}>
-                <CartesianGrid vertical={false} stroke="#eef0f4" />
-                <XAxis dataKey="name" tick={{ fontSize: 10, fill: '#677084' }} interval={0} angle={-25} textAnchor="end" height={56} tickLine={false} axisLine={{ stroke: '#dde1e8' }} />
-                <YAxis tick={{ fontSize: 11, fill: '#677084' }} tickLine={false} axisLine={false} />
+                <CartesianGrid vertical={false} stroke="#f1ece0" />
+                <XAxis dataKey="name" tick={{ fontSize: 10, fill: '#7d7563' }} interval={0} angle={-25} textAnchor="end" height={56} tickLine={false} axisLine={{ stroke: '#e3dccb' }} />
+                <YAxis tick={{ fontSize: 11, fill: '#7d7563' }} tickLine={false} axisLine={false} />
                 <Tooltip
-                  cursor={{ fill: '#f7f8fa' }}
-                  contentStyle={{ borderRadius: 12, border: '1px solid #eef0f4', fontSize: 12 }}
+                  cursor={{ fill: '#faf7f0' }}
+                  contentStyle={{ borderRadius: 12, border: '1px solid #f1ece0', fontSize: 12 }}
                   formatter={(v: number) => [`${v} /min`, 'Effective rate']}
                   labelFormatter={(_, p) => (p?.[0]?.payload?.full as string) ?? ''}
                 />
-                <ReferenceLine y={line.targetRatePerMin} stroke="#141824" strokeDasharray="5 4" label={{ value: 'target', position: 'insideTopRight', fontSize: 10, fill: '#4d5567' }} />
+                <ReferenceLine y={line.targetRatePerMin} stroke="#1d1b16" strokeDasharray="5 4" label={{ value: 'target', position: 'insideTopRight', fontSize: 10, fill: '#5f584a' }} />
                 <Bar dataKey="rate" radius={[6, 6, 0, 0]} maxBarSize={48}>
                   {chartData.map((d, i) => (
-                    <Cell key={i} fill={d.isB ? '#f43f5e' : d.under ? '#fb923c' : '#338dfc'} />
+                    <Cell key={i} fill={d.isB ? '#f43f5e' : d.under ? '#fb923c' : '#7d8b3f'} />
                   ))}
                 </Bar>
               </BarChart>

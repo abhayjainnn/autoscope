@@ -249,3 +249,79 @@ export interface ChatMessage {
   role: 'user' | 'assistant';
   content: string;
 }
+
+// ---------------------------------------------------------------- plant details (questionnaire)
+export type PackFormat = 'pet' | 'glass' | 'can' | 'carton' | 'pouch' | 'tray' | 'bag' | 'cup' | 'flow_wrap' | 'bulk';
+export type SecondaryPack = 'case' | 'shrink' | 'tray' | 'crate' | 'display' | 'none';
+export type TempZone = 'ambient' | 'chilled' | 'frozen' | 'hot_fill';
+export type DataMaturity = 'paper' | 'excel' | 'erp' | 'mes';
+
+/** Every detail captured by the guided questionnaire. All fields are optional inputs that
+ *  refine the analysis and the report; the engine never requires them. */
+export interface PlantDetails {
+  // Products & packaging
+  packFormats: PackFormat[];
+  secondaryPack: SecondaryPack;
+  containerSizes: string;          // e.g. "0.33 L, 0.75 L"
+  temperatureZone: TempZone;
+  shelfLifeDays: number;
+  allergenChangeovers: boolean;
+  newSkusPerYear: number;
+  seasonalPeakPct: number;         // 0-1 extra volume in peak season
+  // Volumes & logistics
+  unitsPerCase: number;
+  caseWeightKg: number;
+  casesPerPallet: number;
+  palletsPerDay: number;
+  mixedPalletsPct: number;         // 0-1 share of mixed/customer-specific pallets
+  palletType: 'euro' | 'industrial' | 'half' | 'mixed';
+  forkliftTripsPerShift: number;
+  warehouseDistanceM: number;
+  // People & safety
+  productionStaff: number;
+  openVacancies: number;
+  staffTurnoverPct: number;        // 0-1 per year
+  sickLeavePct: number;            // 0-1
+  temporaryWorkersPct: number;     // 0-1
+  ergonomicComplaintsPerYear: number;
+  lostTimeInjuriesPerYear: number;
+  // Quality & compliance
+  certifications: string[];        // IFS, BRCGS, ISO 22000, FSSC 22000, Organic, Halal...
+  customerComplaintsPerMonth: number;
+  traceability: 'batch_paper' | 'batch_digital' | 'unit_level';
+  manualQualityChecksPerShift: number;
+  cleaningMinPerDay: number;
+  // Site & technical readiness
+  floorSpaceM2: number;            // free space near the line
+  ceilingHeightM: number;
+  compressedAir: boolean;
+  maintenanceStaff: number;
+  plcConnectivity: 'none' | 'some' | 'most';
+  dataMaturity: DataMaturity;
+  erpSystem: string;
+  existingRobots: number;
+  // Decision frame
+  decisionTimelineMonths: number;
+  fundingInterest: boolean;        // interested in public funding (e.g. KfW, state programmes)
+  biggestPain: string;
+  previousAutomationExperience: 'none' | 'bad' | 'good';
+}
+
+// ---------------------------------------------------------------- office / admin processes
+export type OfficeTask = 'data' | 'docs' | 'report' | 'email' | 'approve' | 'quality_log' | 'planning';
+/** Five 1/3/5 ratings: rule-based, structured input, few exceptions, stability, system access. */
+export type Ratings = [number, number, number, number, number];
+
+export interface OfficeProcess {
+  id: string;
+  name: string;
+  task: OfficeTask;
+  minPerRun: number;
+  runsPerWeek: number;
+  errPct: number;          // 0-100
+  costPerError: number;    // EUR
+  ratings: Ratings;
+}
+
+/** Verdict a station or process gets: the tool must be able to say "no". */
+export type Verdict = 'now' | 'quick' | 'fix' | 'no' | 'done';

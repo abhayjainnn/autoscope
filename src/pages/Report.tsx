@@ -15,7 +15,7 @@ const PRINT_CSS = `
 }
 `;
 
-const PHASE_COLOR: Record<Phase, string> = { quick_win: '#10b981', mid_term: '#1d6ef1', strategic: '#8b5cf6' };
+const PHASE_COLOR: Record<Phase, string> = { quick_win: '#10b981', mid_term: '#636f30', strategic: '#b9874a' };
 
 export default function Report() {
   const a: AnalysisBundle = useAnalysis();

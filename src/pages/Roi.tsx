@@ -10,25 +10,25 @@ import { eur, pct, years, num, STATION_TYPE_LABEL } from '../lib/format';
 import type { AnalysisBundle, RoiResult } from '../types';
 
 const C = {
-  brand: '#1d6ef1',
-  brandLight: '#8eceff',
+  brand: '#636f30',
+  brandLight: '#b8c27f',
   good: '#10b981',
   bad: '#f43f5e',
   warn: '#f59e0b',
-  ink: '#8f97a6',
-  grid: '#eef0f4',
+  ink: '#a39a84',
+  grid: '#f1ece0',
 };
 
 const SAVING_KEYS: { key: keyof RoiResult['annualSavings']; label: string; color: string }[] = [
-  { key: 'labour', label: 'Labour', color: '#1d6ef1' },
+  { key: 'labour', label: 'Labour', color: '#636f30' },
   { key: 'scrap', label: 'Scrap', color: '#10b981' },
   { key: 'downtime', label: 'Downtime', color: '#f59e0b' },
-  { key: 'ergonomics', label: 'Ergonomics', color: '#8b5cf6' },
+  { key: 'ergonomics', label: 'Ergonomics', color: '#b9874a' },
   { key: 'throughput', label: 'Throughput', color: '#06b6d4' },
 ];
 
 const axisEur = (v: number) => eur(v);
-const tipStyle = { borderRadius: 12, border: '1px solid #dde1e8', fontSize: 12, boxShadow: '0 4px 16px rgba(20,24,36,.08)' };
+const tipStyle = { borderRadius: 12, border: '1px solid #e3dccb', fontSize: 12, boxShadow: '0 4px 16px rgba(20,24,36,.08)' };
 
 const riskTone = (r: number) => (r < 35 ? 'good' : r < 60 ? 'warn' : 'bad') as 'good' | 'warn' | 'bad';
 const riskLabel = (r: number) => (r < 35 ? 'Low' : r < 60 ? 'Medium' : 'High');
@@ -211,11 +211,11 @@ export default function Roi() {
                     <YAxis tickFormatter={axisEur} tick={{ fontSize: 11, fill: C.ink }} axisLine={false} tickLine={false} width={56} />
                     <Tooltip contentStyle={tipStyle} formatter={(v: number, n: string) => [eur(v), n]} labelFormatter={(l) => `Year ${l}`} />
                     <Legend iconType="plainline" wrapperStyle={{ fontSize: 12 }} />
-                    <ReferenceLine y={0} stroke="#3a4152" strokeWidth={1} />
+                    <ReferenceLine y={0} stroke="#474237" strokeWidth={1} />
                     <Area type="monotone" dataKey="cum" name="Cumulative (undiscounted)" stroke={C.brand} strokeWidth={2.5} fill="url(#cumFill)" />
                     <Line type="monotone" dataKey="disc" name="Cumulative (discounted)" stroke={C.good} strokeWidth={2} strokeDasharray="5 4" dot={false} />
                     {breakEven !== null && (
-                      <ReferenceDot x={breakEven} y={0} r={6} fill="#fff" stroke={C.brand} strokeWidth={3} ifOverflow="extendDomain" label={{ value: `Break-even ${years(breakEven)}`, position: 'top', fontSize: 11, fill: '#1557de', fontWeight: 600 }} />
+                      <ReferenceDot x={breakEven} y={0} r={6} fill="#fff" stroke={C.brand} strokeWidth={3} ifOverflow="extendDomain" label={{ value: `Break-even ${years(breakEven)}`, position: 'top', fontSize: 11, fill: '#4d5727', fontWeight: 600 }} />
                     )}
                   </ComposedChart>
                 </ResponsiveContainer>
@@ -232,7 +232,7 @@ export default function Roi() {
                     <YAxis tickFormatter={axisEur} tick={{ fontSize: 11, fill: C.ink }} axisLine={false} tickLine={false} width={56} />
                     <Tooltip contentStyle={tipStyle} formatter={(v: number, n: string) => [eur(v), n]} cursor={{ fill: 'rgba(29,110,241,.05)' }} />
                     <Legend wrapperStyle={{ fontSize: 12 }} iconType="circle" iconSize={8} />
-                    <ReferenceLine y={0} stroke="#3a4152" />
+                    <ReferenceLine y={0} stroke="#474237" />
                     {SAVING_KEYS.map((k, i) => (
                       <Bar key={k.key} dataKey={k.key} name={k.label} stackId="s" fill={k.color} maxBarSize={56} radius={i === SAVING_KEYS.length - 1 ? [4, 4, 0, 0] : undefined} />
                     ))}
@@ -254,14 +254,14 @@ export default function Roi() {
                     <BarChart data={tornado} layout="vertical" stackOffset="sign" margin={{ top: 4, right: 16, left: 8, bottom: 0 }} barCategoryGap={8}>
                       <CartesianGrid stroke={C.grid} horizontal={false} />
                       <XAxis type="number" tickFormatter={(v: number) => eur(v + baseNpv)} tick={{ fontSize: 11, fill: C.ink }} axisLine={false} tickLine={false} />
-                      <YAxis type="category" dataKey="label" width={130} tick={{ fontSize: 11, fill: '#3a4152' }} axisLine={false} tickLine={false} />
+                      <YAxis type="category" dataKey="label" width={130} tick={{ fontSize: 11, fill: '#474237' }} axisLine={false} tickLine={false} />
                       <Tooltip
                         contentStyle={tipStyle}
                         cursor={{ fill: 'rgba(29,110,241,.05)' }}
                         formatter={(v: number, n: string) => [`NPV ${eur(v + baseNpv)} (${v >= 0 ? '+' : ''}${eur(v)})`, n]}
                       />
                       <Legend wrapperStyle={{ fontSize: 12 }} iconType="circle" iconSize={8} />
-                      <ReferenceLine x={0} stroke="#3a4152" strokeWidth={1.5} label={{ value: 'base', position: 'top', fontSize: 10, fill: C.ink }} />
+                      <ReferenceLine x={0} stroke="#474237" strokeWidth={1.5} label={{ value: 'base', position: 'top', fontSize: 10, fill: C.ink }} />
                       <Bar dataKey="low" name="Input at low value" stackId="t" radius={4}>
                         {tornado.map((t, i) => (
                           <Cell key={i} fill={t.low < 0 ? C.bad : C.good} fillOpacity={0.85} />

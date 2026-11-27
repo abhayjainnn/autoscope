@@ -11,12 +11,12 @@ import AiExplain from '../components/AiExplain';
 import type { AnalysisBundle, OpportunityScore, ScoreFactorKey, Station, StationAnalysis, RoiResult } from '../types';
 
 const FACTOR_COLOR: Record<ScoreFactorKey, string> = {
-  labour: '#1d6ef1',
-  repetitiveness: '#8b5cf6',
+  labour: '#636f30',
+  repetitiveness: '#b9874a',
   ergonomics: '#f59e0b',
   quality: '#ef4444',
   bottleneck: '#10b981',
-  stability: '#64748b',
+  stability: '#7d7563',
 };
 
 const FACTOR_LABEL: Record<ScoreFactorKey, string> = {
@@ -152,7 +152,7 @@ function StationCard({ score, station, sa, roi, muted }: { score: OpportunitySco
 
 interface Pt { id: string; name: string; x: number; y: number; z: number; quadrant: string }
 
-const QUAD_COLOR: Record<string, string> = { 'Quick win': '#10b981', 'Big bet': '#1d6ef1', 'Fill-in': '#94a3b8', Avoid: '#ef4444' };
+const QUAD_COLOR: Record<string, string> = { 'Quick win': '#10b981', 'Big bet': '#636f30', 'Fill-in': '#b4ab95', Avoid: '#ef4444' };
 
 function ImpactEffort({ points }: { points: Pt[] }) {
   if (points.length === 0) return <Empty title="No investment estimates yet">Add stations with automation potential to see the impact vs effort map.</Empty>;
@@ -166,15 +166,15 @@ function ImpactEffort({ points }: { points: Pt[] }) {
       <ResponsiveContainer width="100%" height="100%">
         <ScatterChart margin={{ top: 16, right: 24, bottom: 24, left: 8 }}>
           <ReferenceArea x1={0} x2={xSplit} y1={ySplit} y2={100} fill="#10b981" fillOpacity={0.06} label={{ value: 'Quick wins', position: 'insideTopLeft', fill: '#059669', fontSize: 11, fontWeight: 600 }} />
-          <ReferenceArea x1={xSplit} x2={xMax} y1={ySplit} y2={100} fill="#1d6ef1" fillOpacity={0.05} label={{ value: 'Big bets', position: 'insideTopRight', fill: '#1557de', fontSize: 11, fontWeight: 600 }} />
-          <ReferenceArea x1={0} x2={xSplit} y1={0} y2={ySplit} fill="#94a3b8" fillOpacity={0.05} label={{ value: 'Fill-ins', position: 'insideBottomLeft', fill: '#64748b', fontSize: 11, fontWeight: 600 }} />
+          <ReferenceArea x1={xSplit} x2={xMax} y1={ySplit} y2={100} fill="#636f30" fillOpacity={0.05} label={{ value: 'Big bets', position: 'insideTopRight', fill: '#4d5727', fontSize: 11, fontWeight: 600 }} />
+          <ReferenceArea x1={0} x2={xSplit} y1={0} y2={ySplit} fill="#b4ab95" fillOpacity={0.05} label={{ value: 'Fill-ins', position: 'insideBottomLeft', fill: '#7d7563', fontSize: 11, fontWeight: 600 }} />
           <ReferenceArea x1={xSplit} x2={xMax} y1={0} y2={ySplit} fill="#ef4444" fillOpacity={0.05} label={{ value: 'Avoid', position: 'insideBottomRight', fill: '#dc2626', fontSize: 11, fontWeight: 600 }} />
-          <CartesianGrid strokeDasharray="3 3" stroke="#eef0f4" />
-          <XAxis type="number" dataKey="x" domain={[0, xMax]} tickFormatter={(v) => eur(v)} tick={{ fontSize: 11, fill: '#677084' }} label={{ value: 'Estimated investment (effort)', position: 'insideBottom', offset: -12, fontSize: 11, fill: '#677084' }} />
-          <YAxis type="number" dataKey="y" domain={[0, 100]} tick={{ fontSize: 11, fill: '#677084' }} label={{ value: 'Opportunity score (impact)', angle: -90, position: 'insideLeft', offset: 14, fontSize: 11, fill: '#677084' }} />
+          <CartesianGrid strokeDasharray="3 3" stroke="#f1ece0" />
+          <XAxis type="number" dataKey="x" domain={[0, xMax]} tickFormatter={(v) => eur(v)} tick={{ fontSize: 11, fill: '#7d7563' }} label={{ value: 'Estimated investment (effort)', position: 'insideBottom', offset: -12, fontSize: 11, fill: '#7d7563' }} />
+          <YAxis type="number" dataKey="y" domain={[0, 100]} tick={{ fontSize: 11, fill: '#7d7563' }} label={{ value: 'Opportunity score (impact)', angle: -90, position: 'insideLeft', offset: 14, fontSize: 11, fill: '#7d7563' }} />
           <ZAxis type="number" dataKey="z" range={[120, 1100]} />
-          <ReferenceLine x={xSplit} stroke="#c3c9d4" strokeDasharray="4 4" />
-          <ReferenceLine y={ySplit} stroke="#c3c9d4" strokeDasharray="4 4" />
+          <ReferenceLine x={xSplit} stroke="#cdc4ae" strokeDasharray="4 4" />
+          <ReferenceLine y={ySplit} stroke="#cdc4ae" strokeDasharray="4 4" />
           <Tooltip
             cursor={{ strokeDasharray: '3 3' }}
             content={({ active, payload }) => {
@@ -195,7 +195,7 @@ function ImpactEffort({ points }: { points: Pt[] }) {
               const q = p.y >= ySplit ? (p.x <= xSplit ? 'Quick win' : 'Big bet') : p.x <= xSplit ? 'Fill-in' : 'Avoid';
               return <Cell key={p.id} fill={QUAD_COLOR[q]} fillOpacity={0.7} stroke={QUAD_COLOR[q]} />;
             })}
-            <LabelList dataKey="name" position="top" offset={10} style={{ fontSize: 11, fill: '#252b38', fontWeight: 500 }} />
+            <LabelList dataKey="name" position="top" offset={10} style={{ fontSize: 11, fill: '#2f2c25', fontWeight: 500 }} />
           </Scatter>
         </ScatterChart>
       </ResponsiveContainer>

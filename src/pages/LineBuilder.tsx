@@ -66,7 +66,7 @@ function LineBuilderInner() {
     () =>
       stations.slice(1).map((s, i) => {
         const hot = la.bottleneckId === s.id;
-        const color = hot ? '#f43f5e' : '#338dfc';
+        const color = hot ? '#f43f5e' : '#7d8b3f';
         return {
           id: `${stations[i].id}-${s.id}`,
           source: stations[i].id,
@@ -186,7 +186,7 @@ function LineBuilderInner() {
               maxZoom={1.6}
               proOptions={{ hideAttribution: true }}
             >
-              <Background gap={20} color="#dde1e8" />
+              <Background gap={20} color="#e3dccb" />
               <Controls showInteractive={false} position="bottom-left" />
               <FitOnChange count={stations.length} />
             </ReactFlow>

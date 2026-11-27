@@ -9,12 +9,12 @@ import type { AnalysisBundle, Phase, RoadmapItem } from '../types';
 
 const PHASES: { key: Phase; title: string; color: string; soft: string; text: string; icon: typeof Zap; blurb: string }[] = [
   { key: 'quick_win', title: 'Quick wins', color: '#10b981', soft: 'bg-emerald-50', text: 'text-emerald-700', icon: Zap, blurb: 'Low risk, fast payback, builds confidence' },
-  { key: 'mid_term', title: 'Mid-term', color: '#1d6ef1', soft: 'bg-brand-50', text: 'text-brand-700', icon: Rocket, blurb: 'Core automation of the line' },
-  { key: 'strategic', title: 'Strategic', color: '#8b5cf6', soft: 'bg-violet-50', text: 'text-violet-700', icon: Mountain, blurb: 'Larger bets once the basics run' },
+  { key: 'mid_term', title: 'Mid-term', color: '#636f30', soft: 'bg-brand-50', text: 'text-brand-700', icon: Rocket, blurb: 'Core automation of the line' },
+  { key: 'strategic', title: 'Strategic', color: '#b9874a', soft: 'bg-violet-50', text: 'text-violet-700', icon: Mountain, blurb: 'Larger bets once the basics run' },
 ];
 
-const HATCH = 'repeating-linear-gradient(135deg, #e5e7eb 0 6px, #f3f4f6 6px 12px)';
-const tipStyle = { borderRadius: 12, border: '1px solid #dde1e8', fontSize: 12 };
+const HATCH = 'repeating-linear-gradient(135deg, #e3dccb 0 6px, #f1ece0 6px 12px)';
+const tipStyle = { borderRadius: 12, border: '1px solid #e3dccb', fontSize: 12 };
 
 const STEPS = [
   { t: 'Request 2–3 integrator quotes per technology class', d: "Send AutoScope's vendor-neutral spec sheet so quotes are comparable." },
@@ -171,16 +171,16 @@ export default function Roadmap() {
                   <AreaChart data={curve} margin={{ top: 16, right: 16, left: 4, bottom: 0 }}>
                     <defs>
                       <linearGradient id="invFill" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor="#1d6ef1" stopOpacity={0.3} />
-                        <stop offset="100%" stopColor="#1d6ef1" stopOpacity={0.03} />
+                        <stop offset="0%" stopColor="#636f30" stopOpacity={0.3} />
+                        <stop offset="100%" stopColor="#636f30" stopOpacity={0.03} />
                       </linearGradient>
                     </defs>
-                    <CartesianGrid stroke="#eef0f4" vertical={false} />
-                    <XAxis dataKey="month" type="number" domain={[0, totalMonths]} ticks={ticks} tickFormatter={(v) => `M${v}`} tick={{ fontSize: 11, fill: '#8f97a6' }} axisLine={false} tickLine={false} />
-                    <YAxis tickFormatter={(v: number) => eur(v)} tick={{ fontSize: 11, fill: '#8f97a6' }} axisLine={false} tickLine={false} width={56} domain={[0, (max: number) => Math.max(max, profile.budget) * 1.08]} />
+                    <CartesianGrid stroke="#f1ece0" vertical={false} />
+                    <XAxis dataKey="month" type="number" domain={[0, totalMonths]} ticks={ticks} tickFormatter={(v) => `M${v}`} tick={{ fontSize: 11, fill: '#a39a84' }} axisLine={false} tickLine={false} />
+                    <YAxis tickFormatter={(v: number) => eur(v)} tick={{ fontSize: 11, fill: '#a39a84' }} axisLine={false} tickLine={false} width={56} domain={[0, (max: number) => Math.max(max, profile.budget) * 1.08]} />
                     <Tooltip contentStyle={tipStyle} formatter={(v: number, n: string) => [eur(v), n]} labelFormatter={(l) => `Month ${l}`} />
-                    <Area type="monotone" dataKey="all" name="Incl. over-budget items" stroke="#c3c9d4" strokeDasharray="4 4" fill="transparent" strokeWidth={1.5} />
-                    <Area type="monotone" dataKey="withinBudget" name="Within budget" stroke="#1d6ef1" fill="url(#invFill)" strokeWidth={2.5} />
+                    <Area type="monotone" dataKey="all" name="Incl. over-budget items" stroke="#cdc4ae" strokeDasharray="4 4" fill="transparent" strokeWidth={1.5} />
+                    <Area type="monotone" dataKey="withinBudget" name="Within budget" stroke="#636f30" fill="url(#invFill)" strokeWidth={2.5} />
                     <ReferenceLine y={profile.budget} stroke="#f43f5e" strokeDasharray="6 4" strokeWidth={1.5} label={{ value: `Budget ${eur(profile.budget)}`, position: 'insideTopRight', fontSize: 11, fill: '#e11d48', fontWeight: 600 }} />
                   </AreaChart>
                 </ResponsiveContainer>
